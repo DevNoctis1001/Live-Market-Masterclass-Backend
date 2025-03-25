@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from apps.alerts.views import gmail_webhook
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('api/gmail-webhook', gmail_webhook, name = 'gmail_webhook')
+    path('webhook/', gmail_webhook, name = 'gmail_webhook')
 ]
