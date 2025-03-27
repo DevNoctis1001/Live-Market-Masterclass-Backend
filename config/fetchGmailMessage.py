@@ -51,7 +51,9 @@ SCOPES = ["https://mail.google.com/"]
 
 
 def ParseStringByRe(message) :
-    pattern  = r'(#\d+) ([A-Z]+) ([+-]?\d+) ([A-Z]+) (\d+) \((\w+)\) (\d+) (\w+) (\d+) (\d+) (\w+) @(\d+\.\d+)LAST=(\d+\.\d+) BID=(\d+\.\d+) ASK=(\d+\.\d+) MARK=(\d+\.\d+) CLOSE=(\w+) , ACCOUNT (\*{5}\w+)'
+    
+    print(f"Messge: \n {message}\n")
+    pattern  = r'(#\d+) ([A-Z]+) ([+-]?\d+) ([A-Z]+) (\d+) \((\w+)\) (\d+) (\w+) (\d+) (\d+) (\w+) @(\d*\.\d+)LAST=(\d+\.\d+) BID=(\d+\.\d+) ASK=(\d+\.\d+) MARK=(\d+\.\d+) CLOSE=(\w+) , ACCOUNT (\*{5}\w+)'
     match = re.match(pattern, message)
     extractedOrder = OrderDetail()
 
