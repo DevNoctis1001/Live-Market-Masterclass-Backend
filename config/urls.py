@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from apps.alerts.views import gmail_webhook
+from django.shortcuts import redirect  # Add this import
+
+# def redirect_to_admin(request):
+#     return redirect('admin:index')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # path('api/gmail-webhook', gmail_webhook, name = 'gmail_webhook')
-    path('webhook/', gmail_webhook, name = 'gmail_webhook')
+    # path('', "Hello ", name='home'),  # Add this line
+    path('admin/', admin.site.urls), 
+    path('gmail_webhook/', gmail_webhook),  # Add this line to include the webhook URL
 ]
