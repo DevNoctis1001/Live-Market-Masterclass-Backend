@@ -6,4 +6,6 @@ python-dotenv
 requests
 django-debug-toolbar
 pytz
-google.auth.transport.requests
+# google.auth.transport.requests
+python-telegram-bot
+djangorestframework
