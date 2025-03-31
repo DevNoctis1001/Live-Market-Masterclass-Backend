@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.alerts',
     'rest_framework',
-    'apps.telegrambot'
+    'apps.telegrambot',
+    'django_json_widget', # needed for django admin site
 ]
 
 MIDDLEWARE = [

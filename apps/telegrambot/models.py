@@ -8,4 +8,4 @@ class TelegramUser(models.Model):
 class Message(models.Model) :
     user = models.ForeignKey(TelegramUser, on_delete = models.CASCADE)
     text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True)  
