@@ -42,9 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.alerts',
+    'apps.alerts.apps.AlertsConfig',
     'rest_framework',
-    'apps.telegrambot',
     'django_json_widget', # needed for django admin site
 ]
 
