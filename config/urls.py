@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apps.alerts.views import main
+from apps.alerts import views
 
 from django.shortcuts import redirect  # Add this import
 
@@ -25,8 +25,9 @@ from django.shortcuts import redirect  # Add this import
 
 urlpatterns = [
     # path('', "Hello ", name='home'),  # Add this line
-    path('', main, name = "FetchEmail"),
+    path('',views.main, name = "FetchEmail"),
     path('admin/', admin.site.urls), 
+    path('sms_webhook/', views.sms_webhook, name = 'sms_webhook')
     # path('gmail_webhook/', gmail_webhook),  # Add this line to include the webhook URL
     # path('api/telegram/', handle_telegram_update, name='telegram_webhook')
     

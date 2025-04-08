@@ -3,14 +3,14 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 # If modifying these scopes, delete the file token.json.
 
 from .utils.telegrambot import TelegramBot
 from .utils.sendnotification import send_telegram_notification
 
-
+import json
 # def start_TGbot():
 #     telegram_bot = TelegramBot.get_instance("7598620067:AAFMSpKJaxZ4gyXCyLW78vi5n5ivuC1b_zM")
 
@@ -34,6 +34,25 @@ from .utils.sendnotification import send_telegram_notification
 #     return(bot.notify(message))
 #   return False
 
+@csrf_exempt
+def sms_webhook(request):
+    if request.method == 'POST':
+        try:
+            data= json.loads(request.body)
+            sms_message = data.get('body')
+            sender = data.get('from')
+            timestamp = data.get('timestamp')
+
+            print(f"Received SMS: {sms_message} from {sender} at {timestamp}")
+
+            return JsonResponse({'status': 'success'},status = 200)
+        except Exception as e:
+            print(f"Error processing SMS: {e}")
+            return JsonResponse({'status': 'error'}, status=500)
+    else:
+            return JsonResponse({'message': 'Invalid request method'}, status=405)
+
+
 @api_view(['GET'])
 def main(request):
     print("Start Fetching...")
@@ -48,3 +67,4 @@ def main(request):
 #    while True:
       
     # Fetch(telegram_bot)
+
