@@ -1,4 +1,4 @@
-from .telegrambot import TelegramBot
+from .telegrambot1 import TelegramBot
 
 def send_telegram_notification(message):
     """

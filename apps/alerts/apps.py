@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from .utils.telegrambot import TelegramBot
+from .utils.telegrambot1 import TelegramBot
 import os
 
 class AlertsConfig(AppConfig):

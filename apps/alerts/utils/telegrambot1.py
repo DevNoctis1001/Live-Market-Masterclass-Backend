@@ -1,17 +1,13 @@
 from telegram import Update
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackContext
 from threading import Thread
 import time
 import asyncio
 import logging
 from  .EmailFetch.email_fetch import EmailFetchClass
-from datetime import date, datetime
-import pytz
+
 import json
 
-est = pytz.timezone('US/Eastern')
 users_filepath ='apps/alerts/utils/activeusers.json'
 
 class TelegramBot:
@@ -41,145 +37,17 @@ class TelegramBot:
 
     # Function to handle the /start command
     async def start(self, update: Update, context: CallbackContext) -> None:
-        print("start command detected")
         user = update.effective_user
         self.user_name = user.username if user.username else "User"
         self.user_id = user.id
         self.chat_id= update.message.chat_id
 
         self.append_user_onusers()
-        self.modify_user_onusers(0)
         print(f"Username : {self.user_name}, User ID : {self.user_id} Chat ID: {self.chat_id}")
-        print("start command completed")
         if update.effective_chat:
             self.chat_ids.add(update.effective_chat.id)
-            # await update.message.reply_text(f'Hello {self.user_name}! You are now subscribed to event notifications.')
-
-
-        keyboard = [
-            [InlineKeyboardButton("📖 Read Full Disclaimer", callback_data="read_disclaimer")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-            
-        await update.message.reply_text(
-            f'📜    Welcome to LiveMarketMasterClassBot! \n \n'
-            'Before we begin, please read and accept our Educational Trade Alerts Disclaimer to proceed. \n \n'
-            'All trade examples are for educational purposes only and must not be used as financial advice. \n \n'
-            'We are not liable for any financial losses resulting from actions taken based on this content. \n \n'
-            'Tap "Read Full Disclaimer" below to continue.',
-            reply_markup=reply_markup
-        )
-
-
-    # Function to handle the /stop command
+            await update.message.reply_text(f'Hello {self.user_name}! You are now subscribed to event notifications.')
     
-    async def stop(self, update:Update, context: CallbackContext) -> None:
-        user = update.effective_user
-        self.user_name = user.username if user.username else "User"
-        self.user_id = user.id
-        self.chat_id= update.message.chat_id
-
-        await update.message.reply_text(
-            '🛑 You have stopped the subscription.'
-        )
-
-        self.modify_user_onusers(0)
-
-
-    async def upgrade(self, update:Update, context: CallbackContext) -> None:
-        user = update.effective_user
-        self.user_name = user.username if user.username else "User"
-        self.user_id = user.id
-        self.chat_id= update.message.chat_id
-
-        await update.message.reply_text(
-            '👋 Welcome to Platinum Notifications! \n \n'
-            'As a Platinum member, you will receive both Entry and Exit Alerts to support your learning and strategy development. \n \n'
-            '📌 Reminder: These alerts are for educational use only. They are not financial advice or recommendations to buy, sell, or trade any security. Our goal is to help you study real-time examples that align with what you’ve learned in the course, so you can strengthen your understanding and confidence. \n \n'
-            'We are not liable for any trading decisions or financial outcomes. Always do your own research and speak to a qualified professional before making any investment choices. \n \n'
-        )
-
-        self.modify_user_onusers(2)
-
-    async def help(self, update:Update, context: CallbackContext) -> None:
-        await update.message.reply_text(
-            '👋  Coming soon! \n \n'
-        )
-
-    async def btn_handler(self, update: Update, context: CallbackContext) -> None:
-        query = update.callback_query
-        await query.answer()  # Acknowledge the button click
-
-        keyboard = [
-            [
-                InlineKeyboardButton("✅ YES, I AGREE AND UNDERSTAND", callback_data="accept_terms"),
-            ],
-            [
-                InlineKeyboardButton("❌ NO, I DO NOT AGREE", callback_data="decline_terms")
-            ]
-                
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        if query.data == "read_disclaimer":
-            await self.reply_disclaimer(query, reply_markup)
-        if query.data == "accept_terms":
-            await self.reply_accept_term(query)
-        if query.data == "decline_terms":
-            await self.reply_decline_term(query)
-
-
-    async def reply_accept_term(self, query):
-        await query.message.reply_text(
-                        text=(
-                            "✅ Confirmation: \n\n"
-                            f"@{self.user_name}, you have agreed to the Terms & Conditions on {datetime.now(est).strftime("%Y-%m-%d %H:%M:%S")} EST. \n\n"
-                            "Thank you for your acknowledgment. This record may be used for verification and compliance purposes. You may now continue."
-                        ),
-                        parse_mode='Markdown'
-                    )
-
-        await query.message.reply_text(
-                text=(
-                    "👋 Welcome to Gold Notifications! \n\n"
-                    "You will now begin receiving Entry Alerts based on concepts taught in our trading course. \n\n"
-                    "📌 Please note: All alerts are provided strictly for educational purposes. They are not investment advice, trade recommendations, or signals to take action in any live market. Our examples are intended to help you understand market structure, risk management, and strategy as outlined in the course. \n\n"
-                    "You are solely responsible for your trading decisions. Always consult a licensed financial advisor before making financial decisions."
-                
-                ),
-                parse_mode='Markdown'
-            )
-
-        self.modify_user_onusers(1)
-
-    async def reply_decline_term(self, query):
-        await query.message.reply_text(
-                text=(
-                    "❌ You have declined the disclaimer. \n\n"
-                    "You will not receive educational trade alerts or course examples. If you change your mind, type /start again to review the disclaimer."
-                ),
-                parse_mode='Markdown'
-            )
-        self.modify_user_onusers(0)
-
-    async def reply_disclaimer(self, query, reply_markup):
-        await query.message.reply_text(
-                text=(
-                    "📌 FULL DISCLAIMER & CONSENT AGREEMENT \n\n"
-                    "By subscribing to and receiving trade alerts from this bot, you agree that: \n\n"
-                    "1️⃣ Alerts are for educational purposes only and are not financial or investment advice. \n\n"
-                    "2️⃣ You should not follow these trades in real markets. They're simulations based on course concepts. \n\n"
-                    "3️⃣ We are not liable for any financial losses you incur by acting on this content. \n\n"
-                    "4️⃣ All trading involves risk, and past performance does not guarantee future results. \n\n"
-                    "5️⃣ You accept full responsibility for your own decisions, risk tolerance, and portfolio management. \n\n"
-                    "6️⃣ Always consult with a licensed financial advisor before making any investment. \n\n"
-                    "By accepting, you confirm that you have read, understood, and agreed to these terms. \n\n"
-                    "Do you accept these terms?"
-                ),
-                reply_markup=reply_markup,
-                parse_mode='Markdown'
-        )
-
     # Update activeusers.json (stop)
     def update_subscribe_onusers(self):
         with open(users_filepath, 'r') as file:
@@ -198,26 +66,10 @@ class TelegramBot:
         for active_user in users:
             if active_user['userid'] == self.user_id:
                 return
-        users.append({"username":self.user_name,"userid": self.user_id, "subscribed": 0})
+        users.append({"username":self.user_name,"userid": self.user_id, "subscribed": 1})
         print(f"User {self.user_name} with ID {self.user_id} is now subscribed.")
         with open(users_filepath, 'w') as file:
             json.dump(users, file, indent=4)
-
-    def modify_user_onusers(self, subscribed):
-        with open(users_filepath, 'r') as file:
-            users = json.load(file)
-
-        user_found = False
-        for user in users:
-            if user['userid'] == self.user_id:
-                # Modify existing user data
-                user['subscribed'] = subscribed  # or any logic you want here
-                print(f"User {self.user_name} with ID {self.user_id} has been updated.")
-                break
-
-        with open(users_filepath, 'w') as file:
-            json.dump(users, file, indent=4)
-
 
 
     # Function to handle user messages
@@ -283,15 +135,10 @@ class TelegramBot:
         asyncio.set_event_loop(loop)
         self._is_running = True
 
-        print("Thread start")
         # Setup the application
         self.application = Application.builder().token(self.token).build()
         self.application.add_handler(CommandHandler("start", self.start))
-        self.application.add_handler(CommandHandler("upgrade", self.upgrade))
-        self.application.add_handler(CommandHandler("help", self.help))
-        self.application.add_handler(CommandHandler("stop", self.stop))
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
-        self.application.add_handler(CallbackQueryHandler(self.btn_handler))
 
         # Run the bot
         print("Telegram bot is running...")
@@ -341,8 +188,6 @@ class TelegramBot:
         """
         Start the bot in a separate thread.
         """
-
-
         if self._bot_thread is None or not self._bot_thread.is_alive():
             self._bot_thread = Thread(target=self._bot_thread_function, daemon=True)
             self._bot_thread.start()
@@ -364,7 +209,6 @@ class TelegramBot:
         For standalone usage
         """
         self.start_bot()
-
 
         # # Keep the main thread alive
         # try:

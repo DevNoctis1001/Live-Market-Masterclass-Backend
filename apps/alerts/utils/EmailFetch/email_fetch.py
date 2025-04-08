@@ -46,6 +46,7 @@ class EmailFetchClass :
           # extractedOrder.print()
       else :
         print("Don't match\n-------------------------------\n")
+        return None
         
       return extractedOrder
 
@@ -84,7 +85,7 @@ class EmailFetchClass :
       max_time=-1
       FetchOrder = None
       for message in messages:
-        print(f"NowTime: {time.time()}")
+        print(f"NowTime: {time.strftime('%H:%M:%S', time.localtime())}.{int((time.time() % 1) * 1000):03d}")
         msg = service.users().messages().get(userId='me', id=message['id']).execute()
         
         headers = msg['payload']['headers']
@@ -94,18 +95,24 @@ class EmailFetchClass :
           print(f"Time : {msg['internalDate']}")
           print("----------------------------------------\n")
           if(FetchOrder == None):
-            FetchOrder = self.ParseStringByRe(msg['snippet'])
+            TempOrder = self.ParseStringByRe(msg['snippet'])
+            if TempOrder != None:
+              FetchOrder = TempOrder
             print("----------------------------------------\n")
           else :
-            FetchOrder.Quantity =str( int(FetchOrder.Quantity) + int(self.ParseStringByRe(msg['snippet']).Quantity))
+            TempOrder = self.ParseStringByRe(msg['snippet'])
+            if TempOrder != None:
+              FetchOrder.Quantity =str( int(FetchOrder.Quantity) + int(TempOrder.Quantity))
         else :
           break
-      if FetchOrder == None:
-        return None
       last_time = max_time
       # FetchOrder.print() 
       threading.Thread(target=self.updateLastTime, args=(last_time,)).start()
-      print(f"Last Time : {last_time}")
+      # print(f"Last Time : {last_time}")
+      if FetchOrder == None:
+        print("No new messages.")
+        return None
+      print(f"FetchOrder: {FetchOrder.Quantity}")
       return FetchOrder
 
     except HttpError as error: 
