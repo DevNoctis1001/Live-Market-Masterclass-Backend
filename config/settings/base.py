@@ -30,7 +30,20 @@ SECRET_KEY = 'django-insecure-9p(f7j3-7#_^-0jz10l$cg$vzqgyg=rxtpj!d(anvn5^lt#3*@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'kind-wallaby-entirely.ngrok-free.app',
+    '.ngrok-free.app'
+
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'https://kind-wallaby-entirely.ngrok-free.app',
+    'https://*.ngrok-free.app'
+]
+
 
 
 # Application definition
@@ -48,6 +61,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # 'config.middleware.NgrokAllowedHostMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

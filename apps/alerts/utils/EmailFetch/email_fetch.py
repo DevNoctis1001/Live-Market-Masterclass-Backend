@@ -51,22 +51,25 @@ class EmailFetchClass :
       return extractedOrder
 
   def Fetch(self):
-    creds = None
-    if os.path.exists("token.json"):
-      creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-      if creds and creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-      else:
-        flow = InstalledAppFlow.from_client_secrets_file(
-            "credentials.json", SCOPES
-        )
-        creds = flow.run_local_server(port=0)
-      # Save the credentials for the next run
-      with open("token.json", "w") as token:
-        token.write(creds.to_json())
-
+    try:
+      creds = None
+      if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+      # If there are no (valid) credentials available, let the user log in.
+      if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+          creds.refresh(Request())
+        else:
+          flow = InstalledAppFlow.from_client_secrets_file(
+              "credentials.json", SCOPES
+          )
+          creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open("token.json", "w") as token:
+          token.write(creds.to_json())
+    except Exception as e:
+      # print(f"Error: {e}")
+      return None
     try:
       # Call the Gmail API
       service = build("gmail", "v1", credentials=creds)
@@ -85,7 +88,7 @@ class EmailFetchClass :
       max_time=-1
       FetchOrder = None
       for message in messages:
-        print(f"NowTime: {time.strftime('%H:%M:%S', time.localtime())}.{int((time.time() % 1) * 1000):03d}")
+        # print(f"NowTime: {time.strftime('%H:%M:%S', time.localtime())}.{int((time.time() % 1) * 1000):03d}")
         msg = service.users().messages().get(userId='me', id=message['id']).execute()
         
         headers = msg['payload']['headers']
@@ -110,9 +113,10 @@ class EmailFetchClass :
       threading.Thread(target=self.updateLastTime, args=(last_time,)).start()
       # print(f"Last Time : {last_time}")
       if FetchOrder == None:
-        print("No new messages.")
+        # print("No new messages.")
         return None
-      print(f"FetchOrder: {FetchOrder.Quantity}")
+      FetchOrder.print()
+      # print(f"FetchOrder: {FetchOrder.Quantity}")
       return FetchOrder
 
     except HttpError as error: 

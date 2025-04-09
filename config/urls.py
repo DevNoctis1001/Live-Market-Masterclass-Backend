@@ -27,8 +27,8 @@ urlpatterns = [
     # path('', "Hello ", name='home'),  # Add this line
     path('',views.main, name = "FetchEmail"),
     path('admin/', admin.site.urls), 
-    path('sms_webhook/', views.sms_webhook, name = 'sms_webhook')
-    # path('gmail_webhook/', gmail_webhook),  # Add this line to include the webhook URL
+    # path('sms_webhook/', views.sms_webhook, name = 'sms_webhook')
+    path('gmail_webhook/', views.gmail_webhook, name = "gmail webhook"),  # Add this line to include the webhook URL
     # path('api/telegram/', handle_telegram_update, name='telegram_webhook')
     
 ]

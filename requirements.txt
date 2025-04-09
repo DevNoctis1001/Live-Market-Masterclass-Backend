@@ -9,3 +9,5 @@ pytz
 # google.auth.transport.requests
 python-telegram-bot
 djangorestframework
+
+schedule
