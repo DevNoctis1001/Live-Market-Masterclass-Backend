@@ -28,12 +28,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9p(f7j3-7#_^-0jz10l$cg$vzqgyg=rxtpj!d(anvn5^lt#3*@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'kind-wallaby-entirely.ngrok-free.app',
+    '159.198.79.137',
+    'server1.livemarketmasterclass.com',
+    'www.server1.livemarketmasterclass.com',
+    # 'kind-wallaby-entirely.ngrok-free.app',
     '.ngrok-free.app'
 
 ]
@@ -133,6 +136,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Configure media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
